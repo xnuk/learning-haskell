@@ -1,3 +1,9 @@
+Intro & LICENSE
+===============
+이 내용은 [learnyouahaskell.com](http://learnyouahaskell.com/)(©Miran Lipovača)에서 하스켈을 공부하면서 적은 요약 노트이며, 이 저작물과 원문은 [Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License(Creative Commons 저작자표시-비영리-동일조건변경허락 3.0 Unported) (CC BY-NC-SA 3.0)](http://creativecommons.org/licenses/by-nc-sa/3.0/)로 이용하실 수 있습니다. Pull Request 및 Fork 시 이 라이선스에 동의한 것으로 간주합니다.
+
+기여자: [@xnuk](https://github.com/xnuk)
+
 Starting out
 ============
 Operators
