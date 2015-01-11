@@ -87,3 +87,96 @@ List는 같은 형식만 박을 수 있지만 Tuple은 다른 형식도 박을 �
 ("Christopher", "Walken", 55) -- triple
 ("Christopher", "Walken", 55, []) -- 4-tuple
 ```
+
+Types and Typeclasses
+=====================
+Types
+-----
+- Int: 32bit, 64bit OS에 따라 최댓값, 최솟값이 다름. signed.
+- Integer: 제한 없음. >>> *I mean like really big.* <<<
+- Float
+- Double
+- Bool
+- Char
+
+함수 형식
+--------
+
+### with static types
+```haskell
+functionName :: Type -> Type
+functionName -- function definition here
+
+removeNonUppercase :: [Char] -> [Char]
+removeNonUppercase st = [ c | c <- st, c `elem` ['A'..'Z']]
+
+addThree :: Int -> Int -> Int -> Int
+addThree x y z = x + y + z
+```
+
+### with type *variables*
+```haskell
+ghci> :t head
+head :: [a] -> a
+
+ghci> :t fst
+fst :: (a, b) -> a
+```
+
+### with typeclasses
+```haskell
+ghci> :t (==)  
+(==) :: (Eq a) => a -> a -> Bool -- The type of those two values must be a member of the Eq class
+```
+- `=>`: class constraint
+- `Eq` 타입클래스: All standard Haskell types except for IO and functions are a part of the `Eq` typeclass.
+
+Typeclass
+---------
+- Eq: 함수는 `==`랑 `/=`. 동일성 비교.
+- Ord: order. `>`, `<`, `>=`, `<=` 같은 함수. 멤버이기 위해선 `Eq` 클럽의 일류 회원이어야 함<?
+ - `compare` 함수: 같은 `Ord` 멤버 두 개를 가져와 ordering을 반환.
+ - `Ordering` 타입: `GT`(Greater than), `LT`(Lesser than), `EQ`(EQual)
+- Show: can be presented as strings. 주로 쓰이는 함수에는 `show`가 있음. 일단 문자열로 바꾸고 보는 함수. (->[Char])
+- Read: `Show`의 반대. 함수에는 주로 `read`가 있음. 일단 문자열을 파싱하는 함수. ([Char]->)
+ - 주: `read`를 사용 시 암시적 또는 명시적으로 타입을 알아채게 해야 함.
+```haskell
+read "True" || False -- True
+read "8.2" + 3.8 -- 12.0
+read "5" - 2 -- 3
+read "[1,2,3,4]" ++ [3] -- [1,2,3,4,3]
+read "4" -- >>> Error <<<
+read "4" :: Int -- 4
+read "(3, 'a')" :: (Int, Char) -- (3, 'a')
+```
+- Enum: 연속적으로 열거 가능한 정렬된 타입 클래스. list range에서 쓸 수 있음. 함수는 `succ`(값에 1을 더함), `pred`(값에서 1을 뺌)
+ - `()`, `Bool`, `Char`, `Ordering`, `Int`, `Integer`, `Float`, `Double`.
+- Bounded: 최대, 최소 경계. `minBound`, `maxBound` (`:: Bounded a => a`)
+```haskell
+ghci> minBound::Char
+'\NUL'
+ghci> minBound::Int
+-9223372036854775808
+ghci> minBound::Bool
+False
+ghci> maxBound::Bool
+True
+ghci> maxBound :: (Bool, Int, Char)
+(True,9223372036854775807,'\1114111')
+```
+- Num: 숫자 타입 클래스. `Int`, `Integer`, `Float`, `Double` / 사칙 연산, 등등
+```haskell
+ghci> :t (*)
+(*) :: (Num a) => a -> a -> a
+
+(5 :: Int) * (6 :: Integer) -- Error
+5 * (6 :: Integer) -- 30
+```
+- Floating: `Float`, `Double`밖에 없음.
+- Integral: `Int`, `Integer`밖에 없음.
+ - `fromIntegral` 함수: `Integral`을 `Num`으로 바꿔줌.
+```haskell
+fromIntegral :: (Num b, Integral a) => a -> b
+
+fromIntegral (length [1,2,3,4]) + 3.2 -- 7.2
+```
