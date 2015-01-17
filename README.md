@@ -141,7 +141,7 @@ Typeclass
 ---------
 - Eq: 함수는 `==`랑 `/=`. 동일성 비교.
 - Ord: order. `>`, `<`, `>=`, `<=` 같은 함수. 멤버이기 위해선 `Eq` 클럽의 일류 회원이어야 함<?
- - `compare` 함수: 같은 `Ord` 멤버 두 개를 가져와 ordering을 반환.
+ - `compare` 함수: 같은 타입의 `Ord` 멤버 두 개를 가져와 ordering을 반환.
  - `Ordering` 타입: `GT`(Greater than), `LT`(Lesser than), `EQ`(EQual)
 - Show: can be presented as strings. 주로 쓰이는 함수에는 `show`가 있음. 일단 문자열로 바꾸고 보는 함수. (->[Char])
 - Read: `Show`의 반대. 함수에는 주로 `read`가 있음. 일단 문자열을 파싱하는 함수. ([Char]->)
