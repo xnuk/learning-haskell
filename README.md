@@ -186,3 +186,142 @@ fromIntegral :: (Num b, Integral a) => a -> b
 
 fromIntegral (length [1,2,3,4]) + 3.2 -- 7.2
 ```
+
+Syntax in Functions
+===================
+Pattern matching
+----------------
+- `(함수명) ((값/형식/인자)..) = (expression)`
+- 맨 위부터 아래로 가면서 경우를 검색하며 매칭되는 경우가 없으면 에러를 뿜음.
+- Pattern matching으로 쪼갤 때 `:`는 사용 가능하나 `++`는 사용 가능하지 않음.
+
+```haskell
+sayMe :: (Integral a) => a -> String  
+sayMe 1 = "One!"
+sayMe 2 = "Two!"
+sayMe 3 = "Three!"
+sayMe 4 = "Four!"
+sayMe 5 = "Five!"
+sayMe x = "Not between 1 and 5"
+
+factorial :: (Integral a) => a -> a
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+
+charName :: Char -> String
+charName 'a' = "Albert"
+charName 'b' = "Broseph"
+charName 'c' = "Cecil"
+
+addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
+addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
+
+tell :: (Show a) => [a] -> String
+tell [] = "The list is empty"
+tell (x:[]) = "The list has one element: " ++ show x
+tell (x:y:[]) = "The list has two elements: " ++ show x ++ " and " ++ show y
+tell (x:y:_) = "This list is long. The first two elements are: " ++ show x ++ " and " ++ show y
+
+length' :: (Num b) => [a] -> b
+length' [] = 0
+length' (_:xs) = 1 + length' xs
+
+capital :: String -> String
+capital "" = "Empty string, whoops!"
+capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x] -- all == (x:xs)
+```
+
+Guards
+------
+```haskell
+{-
+(함수명) ((값/형식/인자)..)
+    | (Bool) = (expression)
+    | otherwise = (expression)
+	where (지역변수) = (expression)
+-}
+
+-- 다음 세 코드는 서로 같음
+-- ---------------------------------------------------------------------------
+bmiTell :: (RealFloat a) => a -> a -> String
+bmiTell weight height
+    | weight / height ^ 2 <= 18.5 = "You're underweight, you emo, you!"
+    | weight / height ^ 2 <= 25.0 = "You're supposedly normal. Pffft, I bet you're ugly!"
+    | weight / height ^ 2 <= 30.0 = "You're fat! Lose some weight, fatty!"
+    | otherwise                 = "You're a whale, congratulations!"
+
+bmiTell :: (RealFloat a) => a -> a -> String
+bmiTell weight height
+    | bmi <= 18.5 = "You're underweight, you emo, you!"
+    | bmi <= 25.0 = "You're supposedly normal. Pffft, I bet you're ugly!"
+    | bmi <= 30.0 = "You're fat! Lose some weight, fatty!"
+    | otherwise   = "You're a whale, congratulations!"
+    where bmi = weight / height ^ 2
+
+bmiTell :: (RealFloat a) => a -> a -> String
+bmiTell weight height
+    | bmi <= skinny = "You're underweight, you emo, you!"
+    | bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"
+    | bmi <= fat    = "You're fat! Lose some weight, fatty!"
+    | otherwise     = "You're a whale, congratulations!"
+    where bmi = weight / height ^ 2
+          skinny = 18.5
+          normal = 25.0
+          fat = 30.0
+{-
+    where bmi = weight / height ^ 2  
+      (skinny, normal, fat) = (18.5, 25.0, 30.0)
+-}
+-- ---------------------------------------------------------------------------
+
+myCompare :: (Ord a) => a -> a -> Ordering
+a `myCompare` b
+    | a > b     = GT
+    | a == b    = EQ
+    | otherwise = LT
+
+max' :: (Ord a) => a -> a -> a
+max' a b | a > b = a | otherwise = b
+```
+
+Let, Where
+---
+`let <bindings> in <expression>`
+```haskell
+4 * (let a = 9 in a + 1) + 2 -- 42
+(let a = 100; b = 200; c = 300 in a*b*c, let foo = "Hey "; bar = "there!" in foo ++ bar) -- (6000000, "Hey there!")
+
+calcBmis :: (RealFloat a) => [(a, a)] -> [a]
+calcBmis xs = [bmi | (w, h) <- xs, let bmi = w / h ^ 2]
+
+initials :: String -> String -> String
+initials firstname lastname = [f] ++ ". " ++ [l] ++ "."
+    where (f:_) = firstname
+          (l:_) = lastname
+
+calcBmis :: (RealFloat a) => [(a, a)] -> [a]
+calcBmis xs = [bmi w h | (w, h) <- xs]
+    where bmi weight height = weight / height ^ 2
+```
+
+- `let`은 expression이고 `where`는 문법 구조.
+
+Case expressions
+----------------
+```haskell
+case expression of pattern -> result
+                   pattern -> result
+                   pattern -> result
+                   ...
+
+describeList :: [a] -> String  
+describeList xs = "The list is " ++ case xs of [] -> "empty."  
+                                               [x] -> "a singleton list."
+                                               xs -> "a longer list."
+
+describeList :: [a] -> String
+describeList xs = "The list is " ++ what xs
+    where what [] = "empty."
+          what [x] = "a singleton list."
+          what xs = "a longer list."
+```
